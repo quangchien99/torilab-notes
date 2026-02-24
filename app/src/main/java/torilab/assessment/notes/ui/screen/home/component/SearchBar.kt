@@ -20,8 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import torilab.assessment.notes.R
+import torilab.assessment.notes.ui.theme.ToriNotesTheme
 
 @Composable
 fun NoteSearchBar(
@@ -75,4 +77,28 @@ fun NoteSearchBar(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NoteSearchBarEmptyPreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        NoteSearchBar(
+            query = "",
+            onQueryChange = {},
+            onClear = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NoteSearchBarWithQueryPreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        NoteSearchBar(
+            query = "Meeting notes",
+            onQueryChange = {},
+            onClear = {}
+        )
+    }
 }

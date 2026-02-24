@@ -6,15 +6,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,13 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import torilab.assessment.notes.R
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.ui.screen.component.DeleteConfirmDialog
-import torilab.assessment.notes.ui.screen.component.NoteCard
+import torilab.assessment.notes.ui.screen.home.component.HomeContent
 import torilab.assessment.notes.ui.screen.home.component.NoteSearchBar
 import torilab.assessment.notes.ui.screen.home.component.SelectionTopBar
 
@@ -168,87 +161,5 @@ fun HomeScreen(
             },
             onDismiss = { showBatchDeleteDialog = false }
         )
-    }
-}
-
-@Composable
-private fun HomeContent(
-    notes: LazyPagingItems<Note>,
-    isSearching: Boolean,
-    isSelectionMode: Boolean,
-    selectedNoteIds: Set<Long>,
-    onNoteClick: (Long) -> Unit,
-    onNoteLongClick: (Long) -> Unit,
-    onEditClick: (Long) -> Unit,
-    onShareClick: (Note) -> Unit,
-    onDeleteClick: (Note) -> Unit
-) {
-    when (notes.loadState.refresh) {
-        is LoadState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            }
-        }
-
-        is LoadState.NotLoading if notes.itemCount == 0 -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(
-                        if (isSearching) R.string.empty_search_results
-                        else R.string.empty_notes
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        else -> {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    count = notes.itemCount,
-                    key = { index -> notes[index]?.id ?: index }
-                ) { index ->
-                    notes[index]?.let { note ->
-                        NoteCard(
-                            note = note,
-                            onClick = { onNoteClick(note.id) },
-                            onEditClick = { onEditClick(note.id) },
-                            onShareClick = { onShareClick(note) },
-                            onDeleteClick = { onDeleteClick(note) },
-                            isSelectionMode = isSelectionMode,
-                            isSelected = selectedNoteIds.contains(note.id),
-                            onLongClick = { onNoteLongClick(note.id) }
-                        )
-                    }
-                }
-
-                if (notes.loadState.append is LoadState.Loading) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.primary,
-                                strokeWidth = 2.dp
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }

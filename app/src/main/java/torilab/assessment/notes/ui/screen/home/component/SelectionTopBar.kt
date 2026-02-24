@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import torilab.assessment.notes.R
+import torilab.assessment.notes.ui.theme.ToriNotesTheme
 
 @Composable
 fun SelectionTopBar(
@@ -61,5 +63,31 @@ fun SelectionTopBar(
                 tint = MaterialTheme.colorScheme.error
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectionTopBarPreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        SelectionTopBar(
+            selectedCount = 3,
+            onClose = {},
+            onSelectAll = {},
+            onDelete = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SelectionTopBarDarkPreview() {
+    ToriNotesTheme(dynamicColor = false, darkTheme = true) {
+        SelectionTopBar(
+            selectedCount = 3,
+            onClose = {},
+            onSelectAll = {},
+            onDelete = {}
+        )
     }
 }

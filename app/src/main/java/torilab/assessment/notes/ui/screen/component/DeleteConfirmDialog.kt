@@ -6,7 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import torilab.assessment.notes.R
+import torilab.assessment.notes.ui.theme.ToriNotesTheme
 
 @Composable
 fun DeleteConfirmDialog(
@@ -52,4 +54,28 @@ fun DeleteConfirmDialog(
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DeleteConfirmDialogSinglePreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        DeleteConfirmDialog(
+            onConfirm = {},
+            onDismiss = {},
+            noteCount = 1
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DeleteConfirmDialogMultiplePreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        DeleteConfirmDialog(
+            onConfirm = {},
+            onDismiss = {},
+            noteCount = 5
+        )
+    }
 }

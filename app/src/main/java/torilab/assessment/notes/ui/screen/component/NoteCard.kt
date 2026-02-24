@@ -41,10 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import torilab.assessment.notes.R
 import torilab.assessment.notes.common.toFormattedDate
 import torilab.assessment.notes.domain.model.Note
+import torilab.assessment.notes.ui.theme.ToriNotesTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -211,5 +213,77 @@ fun NoteCard(
                 modifier = Modifier.padding(end = 12.dp)
             )
         }
+    }
+}
+
+private val previewNote = Note(
+    id = 1,
+    title = "Meeting Notes",
+    content = "Discuss project timeline, assign tasks to team members, and review the Q2 budget report.",
+    createdAt = 1708761600000,
+    updatedAt = 1708761600000
+)
+
+@Preview(showBackground = true)
+@Composable
+private fun NoteCardPreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        NoteCard(
+            note = previewNote,
+            onClick = {},
+            onEditClick = {},
+            onShareClick = {},
+            onDeleteClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NoteCardSelectionModePreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        NoteCard(
+            note = previewNote,
+            onClick = {},
+            onEditClick = {},
+            onShareClick = {},
+            onDeleteClick = {},
+            isSelectionMode = true,
+            isSelected = false,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NoteCardSelectedPreview() {
+    ToriNotesTheme(dynamicColor = false) {
+        NoteCard(
+            note = previewNote,
+            onClick = {},
+            onEditClick = {},
+            onShareClick = {},
+            onDeleteClick = {},
+            isSelectionMode = true,
+            isSelected = true,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NoteCardDarkPreview() {
+    ToriNotesTheme(dynamicColor = false, darkTheme = true) {
+        NoteCard(
+            note = previewNote,
+            onClick = {},
+            onEditClick = {},
+            onShareClick = {},
+            onDeleteClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
