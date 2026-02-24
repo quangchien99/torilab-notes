@@ -110,7 +110,9 @@ fun NavGraph() {
             startDestination = Home,
             modifier = Modifier.padding(innerPadding)
         ) {
-            homeScreen()
+            homeScreen(
+                onNoteClick = { noteId -> navController.navigateToAddEditNote(noteId = noteId) }
+            )
             historyScreen()
             settingsScreen()
             addEditNoteScreen(onNavigateBack = { navController.popBackStack() })

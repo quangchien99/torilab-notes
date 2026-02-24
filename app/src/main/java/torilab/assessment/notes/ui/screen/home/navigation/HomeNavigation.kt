@@ -17,8 +17,10 @@ fun NavController.navigateToHome(
     this.navigate(Home, navOptions)
 }
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(
+    onNoteClick: (Long) -> Unit
+) {
     composable<Home> {
-        HomeScreen()
+        HomeScreen(onNoteClick = onNoteClick)
     }
 }
