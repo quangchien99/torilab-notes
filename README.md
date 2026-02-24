@@ -52,7 +52,7 @@ Key architecture components:
 
 | | |
 |:--|:--|
-| **Create & Edit** — Write new notes or update existing ones with real-time saves. | **Delete with Confirmation** — Remove notes safely with a confirmation dialog. |
+| **Create & Edit** — Write new notes or update existing ones with real-time saves. | **Delete Bulk** — Delete multiple notes at once with a confirmation dialog. |
 | **Share Anywhere** — Send notes to other apps via Android's share intent. | **Light & Dark Theme** — Switch between light and dark mode from settings. |
 | **Paginated List** — Smooth scrolling with Paging 3 for large datasets. | **Offline-First** — All data stored locally with Room. No internet required. |
 | **Bulk Generation** — Generate 1000 notes to stress-test performance. | **Bottom Navigation** — Quick access to Home and Settings screens. |
