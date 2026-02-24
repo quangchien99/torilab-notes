@@ -40,6 +40,7 @@ import torilab.assessment.notes.R
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.ui.screen.component.DeleteConfirmDialog
 import torilab.assessment.notes.ui.screen.component.NoteCard
+import torilab.assessment.notes.ui.screen.home.component.NoteSearchBar
 import torilab.assessment.notes.ui.screen.home.component.SelectionTopBar
 
 @Composable
@@ -97,22 +98,31 @@ fun HomeScreen(
             }
 
             AnimatedVisibility(visible = !state.isSelectionMode) {
-                Text(
-                    text = stringResource(R.string.screen_title_home),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp,
-                        bottom = 8.dp
+                Column {
+                    Text(
+                        text = stringResource(R.string.screen_title_home),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            end = 16.dp,
+                            bottom = 4.dp
+                        )
                     )
-                )
+
+                    NoteSearchBar(
+                        query = state.searchQuery,
+                        onQueryChange = { viewModel.onTriggerEvent(HomeEvent.SearchQueryChanged(it)) },
+                        onClear = { viewModel.onTriggerEvent(HomeEvent.ClearSearch) }
+                    )
+                }
             }
 
             HomeContent(
                 notes = notes,
+                isSearching = state.searchQuery.isNotBlank(),
                 isSelectionMode = state.isSelectionMode,
                 selectedNoteIds = state.selectedNoteIds,
                 onNoteClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) },
@@ -161,6 +171,7 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     notes: LazyPagingItems<Note>,
+    isSearching: Boolean,
     isSelectionMode: Boolean,
     selectedNoteIds: Set<Long>,
     onNoteClick: (Long) -> Unit,
@@ -185,7 +196,10 @@ private fun HomeContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.empty_notes),
+                    text = stringResource(
+                        if (isSearching) R.string.empty_search_results
+                        else R.string.empty_notes
+                    ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

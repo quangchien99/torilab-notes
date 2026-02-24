@@ -53,4 +53,17 @@ class NoteRepositoryImpl @Inject constructor(
             pagingData.map { it.toDomain() }
         }
     }
+
+    override fun searchNotes(query: String): Flow<PagingData<Note>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            )
+        ) {
+            noteDao.searchNotes(query)
+        }.flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
+    }
 }

@@ -26,6 +26,15 @@ interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY updatedAt DESC")
     fun getAllNotes(): PagingSource<Int, NoteEntity>
 
+    @Query(
+        """
+        SELECT * FROM notes 
+        WHERE title LIKE '%' || :query || '%'
+        ORDER BY updatedAt DESC
+        """
+    )
+    fun searchNotes(query: String): PagingSource<Int, NoteEntity>
+
     @Query("DELETE FROM notes WHERE id = :id")
     suspend fun deleteNoteById(id: Long)
 

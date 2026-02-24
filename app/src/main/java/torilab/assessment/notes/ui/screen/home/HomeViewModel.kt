@@ -4,7 +4,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.domain.usecase.DeleteMultipleNotesUseCase
@@ -22,8 +28,14 @@ class HomeViewModel @Inject constructor(
     private val deleteMultipleNotesUseCase: DeleteMultipleNotesUseCase
 ) : BaseViewModel<HomeState, HomeEvent>() {
 
-    val notesFlow: Flow<PagingData<Note>> =
-        getAllNotesUseCase().cachedIn(viewModelScope)
+    private val searchQuery = MutableStateFlow("")
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val notesFlow: Flow<PagingData<Note>> = searchQuery
+        .debounce(300)
+        .distinctUntilChanged()
+        .flatMapLatest { query -> getAllNotesUseCase(query) }
+        .cachedIn(viewModelScope)
 
     override fun createInitialState() = HomeState()
 
@@ -43,8 +55,15 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.DeselectAll -> setState { copy(selectedNoteIds = emptySet()) }
             is HomeEvent.ExitSelectionMode -> setState { copy(isSelectionMode = false, selectedNoteIds = emptySet()) }
             is HomeEvent.DeleteSelectedNotes -> deleteSelectedNotes()
+            is HomeEvent.SearchQueryChanged -> onSearchQueryChanged(event.query)
+            is HomeEvent.ClearSearch -> onSearchQueryChanged("")
             else -> Unit
         }
+    }
+
+    private fun onSearchQueryChanged(query: String) {
+        setState { copy(searchQuery = query) }
+        searchQuery.value = query
     }
 
     private fun enterSelectionMode(noteId: Long) {
@@ -87,7 +106,8 @@ class HomeViewModel @Inject constructor(
 
 data class HomeState(
     val isSelectionMode: Boolean = false,
-    val selectedNoteIds: Set<Long> = emptySet()
+    val selectedNoteIds: Set<Long> = emptySet(),
+    val searchQuery: String = ""
 ) : IViewState
 
 sealed interface HomeEvent : IViewEvent {
@@ -103,4 +123,7 @@ sealed interface HomeEvent : IViewEvent {
     data object ExitSelectionMode : HomeEvent
     data object DeleteSelectedNotes : HomeEvent
     data class NotesDeleted(val count: Int) : HomeEvent
+
+    data class SearchQueryChanged(val query: String) : HomeEvent
+    data object ClearSearch : HomeEvent
 }

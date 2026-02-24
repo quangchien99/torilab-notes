@@ -15,6 +15,10 @@
     <string name="hint_content">Start writing…</string>
 
     <string name="empty_notes">No notes yet. Tap + to create one.</string>
+    <string name="empty_search_results">No notes match your search.</string>
+
+    <string name="hint_search">Search notes…</string>
+    <string name="content_description_clear_search">Clear search</string>
 
     <string name="content_description_more_options">More options</string>
 

@@ -9,7 +9,11 @@ import javax.inject.Inject
 class GetAllNotesUseCase @Inject constructor(
     private val noteRepository: NoteRepository
 ) {
-    operator fun invoke(): Flow<PagingData<Note>> {
-        return noteRepository.getAllNotes()
+    operator fun invoke(query: String = ""): Flow<PagingData<Note>> {
+        return if (query.isBlank()) {
+            noteRepository.getAllNotes()
+        } else {
+            noteRepository.searchNotes(query.trim())
+        }
     }
 }
