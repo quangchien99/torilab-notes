@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">ToriNotes</string>
+    <string name="app_name" translatable="false">ToriNotes</string>
+
+    <string name="screen_title_home">Home</string>
+    <string name="screen_title_history">History</string>
+    <string name="screen_title_settings">Settings</string>
+
+
 </resources>
