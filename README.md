@@ -1,4 +1,14 @@
-<!-- TABLE OF CONTENTS -->
+<h1 align="center">ToriNotes</h1>
+<p align="center">A minimal, offline-first notes app built with Jetpack Compose & Clean Architecture.</p>
+
+<p align="center">
+  <img src="docs/gif/demo_1.gif" width="280" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/gif/demo_2.gif" width="280" />
+</p>
+
+---
+
 ## Table of Contents
 
 * [About the Project](#about-the-project)
@@ -9,7 +19,6 @@
 * [Environment Setup](#environment-setup)
 * [Contact](#contact)
 
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
 ToriNotes is a minimal notes application built as an assessment for Torilab. It demonstrates modern Android development practices using Jetpack Compose, Clean Architecture, and MVVM. The app allows users to create, edit, delete, and share notes — all stored locally on the device using Room Database with Paging 3 for efficient data loading.
@@ -31,55 +40,22 @@ Key architecture components:
 
 ## Tech Stacks
 
-This project uses many of the popular libraries, plugins, and tools of the modern Android ecosystem.
-
-- [Compose](https://developer.android.com/jetpack/compose)
-
-    - [Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3) - Build Jetpack Compose UIs with Material Design 3 components.
-    - [UI](https://developer.android.com/jetpack/androidx/releases/compose-ui) - Fundamental components of Compose UI needed to interact with the device, including layout, drawing, and input.
-    - [UI Graphics](https://developer.android.com/jetpack/androidx/releases/compose-ui) - Compose UI primitives for graphics and rendering.
-    - [UI Tooling Preview](https://developer.android.com/jetpack/compose/tooling) - Tooling support for Compose previews in Android Studio.
-    - [Activity Compose](https://developer.android.com/jetpack/androidx/releases/activity) - Compose integration with Activity.
-    - [Lifecycle ViewModel](https://developer.android.com/jetpack/androidx/releases/lifecycle) - Perform actions in response to lifecycle changes of components.
-    - [Paging Compose](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) - Paging 3 integration with Compose for efficient list rendering.
-
-- [Jetpack](https://developer.android.com/jetpack)
-
-    - [AndroidX Core KTX](https://developer.android.com/kotlin/ktx) - Kotlin extensions for core Android APIs.
-    - [Lifecycle](https://developer.android.com/topic/libraries/architecture/lifecycle) - Perform actions in response to lifecycle status changes.
-    - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) - Designed to store and manage UI-related data in a lifecycle-conscious way.
-    - [Room](https://developer.android.com/training/data-storage/room) - Provides an abstraction layer over SQLite for local data persistence.
-    - [Room Paging](https://developer.android.com/training/data-storage/room) - Room integration with Paging 3 for paginated database queries.
-    - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) - Load data gradually and gracefully within lists.
-    - [Navigation Compose](https://developer.android.com/guide/navigation/get-started) - Type-safe navigation with Compose integration.
-    - [AppCompat](https://developer.android.com/jetpack/androidx/releases/appcompat) - Backward-compatible versions of Android framework APIs.
-
-- [Dependency Injection](https://developer.android.com/training/dependency-injection)
-
-    - [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) - Dependency injection library built on Dagger for Android.
-    - [Hilt Navigation Compose](https://developer.android.com/jetpack/compose/libraries#hilt-navigation) - Hilt integration with Navigation Compose for scoped ViewModels.
-
-- Others
-
-    - [Kotlin Coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Library support for coroutines, providing asynchronous programming.
-    - [Kotlin Flow](https://developer.android.com/kotlin/flow) - Reactive streams built on top of coroutines for async data.
-    - [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) - Kotlin-native serialization library for type-safe route arguments.
-    - [Coil 3](https://coil-kt.github.io/coil/compose/) - An image loading library for Android backed by Kotlin Coroutines.
-    - [Gson](https://github.com/google/gson) - A JSON library for Kotlin and Java.
-    - [KSP](https://developer.android.com/build/migrate-to-ksp) - Kotlin Symbol Processing for annotation processing (Room, Hilt).
-    - [SharedPreferences](https://developer.android.com/training/data-storage/shared-preferences) - Key-value storage for app settings (dark mode).
+| Category | Libraries |
+|---|---|
+| **UI** | Jetpack Compose, Material 3, Coil 3 |
+| **Architecture** | ViewModel, Navigation Compose, Kotlin Coroutines & Flow |
+| **Data** | Room, Paging 3, SharedPreferences, Kotlinx Serialization, Gson |
+| **DI** | Hilt |
+| **Tooling** | KSP |
 
 ## Features
 
-- Create new notes with a title and content.
-- Edit existing notes with real-time updates.
-- Delete notes with a confirmation dialog.
-- Share notes to other apps via Android's share intent.
-- Toggle between light and dark theme.
-- Paginated note list for smooth performance with large datasets.
-- Bulk note generation (1000 notes) for testing pagination and performance.
-- Bottom navigation between Home and Settings screens.
-- Offline-first — all data stored locally on device using Room Database.
+| | |
+|:--|:--|
+| **Create & Edit** — Write new notes or update existing ones with real-time saves. | **Delete with Confirmation** — Remove notes safely with a confirmation dialog. |
+| **Share Anywhere** — Send notes to other apps via Android's share intent. | **Light & Dark Theme** — Switch between light and dark mode from settings. |
+| **Paginated List** — Smooth scrolling with Paging 3 for large datasets. | **Offline-First** — All data stored locally with Room. No internet required. |
+| **Bulk Generation** — Generate 1000 notes to stress-test performance. | **Bottom Navigation** — Quick access to Home and Settings screens. |
 
 ## Project Structure
 
@@ -129,7 +105,6 @@ git clone git@github.com:quangchien99/torilab-assessment-notes-app.git
 # Run on emulator or physical device
 ```
 
-<!-- CONTACT -->
 ## Contact
 
 - [GitHub](https://github.com/quangchien99)
