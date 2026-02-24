@@ -28,4 +28,15 @@
 
     <string name="message_note_deleted">Note deleted</string>
 
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_description">Switch between light and dark theme</string>
+
+    <string name="settings_section_about">About</string>
+    <string name="settings_app_description">ToriNotes is a minimal notes app that lets you create, edit, and delete notes — all stored locally on your device for privacy and speed.\n\nBuilt with Kotlin, Jetpack Compose, Room Database, and Clean Architecture.</string>
+    <string name="settings_version">Version</string>
+
+    <string name="settings_section_credit">Credit</string>
+    <string name="settings_credit_message">This app is an assignment for Torilab.\n\nThank you for reviewing this project — it was a great opportunity to put modern Android practices into action while keeping things clean and minimal.</string>
+
 </resources>
