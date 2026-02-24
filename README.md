@@ -139,7 +139,7 @@ The project includes unit tests across all layers of the Clean Architecture, usi
 
 ```bash
 # Clone the repository
-git clone git@github.com:quangchien99/torilab-assessment-notes-app.git
+git clone git@github.com:quangchien99/torilab-notes.git
 
 # Open in Android Studio and sync Gradle
 # Run on emulator or physical device
