@@ -90,14 +90,15 @@ fun HomeScreen(
                     selectedCount = state.selectedNoteIds.size,
                     onClose = { viewModel.onTriggerEvent(HomeEvent.ExitSelectionMode) },
                     onSelectAll = {
-                        val allIds = (0 until notes.itemCount).mapNotNull { notes[it]?.id }
-                        viewModel.onTriggerEvent(HomeEvent.SelectAll(allIds))
+                        viewModel.onTriggerEvent(HomeEvent.SelectAll)
                     },
                     onDelete = { showBatchDeleteDialog = true }
                 )
             }
 
             AnimatedVisibility(visible = !state.isSelectionMode) {
+                val hasNotes = notes.itemCount > 0 || state.searchQuery.isNotBlank()
+
                 Column {
                     Text(
                         text = stringResource(R.string.screen_title_home),
@@ -108,15 +109,17 @@ fun HomeScreen(
                             start = 16.dp,
                             top = 16.dp,
                             end = 16.dp,
-                            bottom = 4.dp
+                            bottom = if (hasNotes) 4.dp else 8.dp
                         )
                     )
 
-                    NoteSearchBar(
-                        query = state.searchQuery,
-                        onQueryChange = { viewModel.onTriggerEvent(HomeEvent.SearchQueryChanged(it)) },
-                        onClear = { viewModel.onTriggerEvent(HomeEvent.ClearSearch) }
-                    )
+                    if (hasNotes) {
+                        NoteSearchBar(
+                            query = state.searchQuery,
+                            onQueryChange = { viewModel.onTriggerEvent(HomeEvent.SearchQueryChanged(it)) },
+                            onClear = { viewModel.onTriggerEvent(HomeEvent.ClearSearch) }
+                        )
+                    }
                 }
             }
 
