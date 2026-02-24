@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.domain.usecase.AddNoteUseCase
+import torilab.assessment.notes.domain.usecase.DeleteNoteUseCase
 import torilab.assessment.notes.domain.usecase.GetNoteByIdUseCase
 import torilab.assessment.notes.domain.usecase.UpdateNoteUseCase
 import torilab.assessment.notes.domain.viewstate.IViewEvent
@@ -20,7 +21,8 @@ class AddEditNoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val addNoteUseCase: AddNoteUseCase,
     private val updateNoteUseCase: UpdateNoteUseCase,
-    private val getNoteByIdUseCase: GetNoteByIdUseCase
+    private val getNoteByIdUseCase: GetNoteByIdUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase
 ) : BaseViewModel<AddEditNoteState, AddEditNoteEvent>() {
 
     init {
@@ -38,6 +40,7 @@ class AddEditNoteViewModel @Inject constructor(
             is AddEditNoteEvent.TitleChanged -> setState { copy(title = event.title) }
             is AddEditNoteEvent.ContentChanged -> setState { copy(content = event.content) }
             is AddEditNoteEvent.SaveNote -> saveNote()
+            is AddEditNoteEvent.DeleteNote -> deleteNote()
             else -> Unit
         }
     }
@@ -89,6 +92,17 @@ class AddEditNoteViewModel @Inject constructor(
             }
         }
     }
+
+    private fun deleteNote() {
+        val state = currentState
+        if (!state.isEditMode || state.noteId == null) return
+
+        viewModelScope.launch {
+            call(deleteNoteUseCase(state.noteId)) {
+                setEvent(AddEditNoteEvent.NoteDeleted)
+            }
+        }
+    }
 }
 
 data class AddEditNoteState(
@@ -106,5 +120,7 @@ sealed interface AddEditNoteEvent : IViewEvent {
     data class ContentChanged(val content: String) : AddEditNoteEvent
     data object SaveNote : AddEditNoteEvent
     data object NoteSaved : AddEditNoteEvent
+    data object DeleteNote : AddEditNoteEvent
+    data object NoteDeleted : AddEditNoteEvent
     data class ShowError(val message: String) : AddEditNoteEvent
 }

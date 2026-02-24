@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +33,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import torilab.assessment.notes.R
 import torilab.assessment.notes.domain.model.Note
+import torilab.assessment.notes.ui.screen.component.DeleteConfirmDialog
 import torilab.assessment.notes.ui.screen.component.NoteCard
 
 @Composable
@@ -103,41 +102,6 @@ fun HomeScreen(
             onDismiss = { noteToDelete = null }
         )
     }
-}
-
-@Composable
-private fun DeleteConfirmDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.dialog_title_delete_note),
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        text = {
-            Text(
-                text = stringResource(R.string.dialog_message_delete_note),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(
-                    text = stringResource(R.string.action_delete),
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.action_cancel))
-            }
-        }
-    )
 }
 
 @Composable
