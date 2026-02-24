@@ -33,6 +33,14 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDao.getNoteById(id)?.toDomain()
     }
 
+    override suspend fun getAllNoteIds(): List<Long> {
+        return noteDao.getAllNoteIds()
+    }
+
+    override suspend fun searchNoteIds(query: String): List<Long> {
+        return noteDao.searchNoteIds(query)
+    }
+
     override suspend fun deleteNoteById(id: Long) {
         noteDao.deleteNoteById(id)
     }

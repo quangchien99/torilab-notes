@@ -35,6 +35,17 @@ interface NoteDao {
     )
     fun searchNotes(query: String): PagingSource<Int, NoteEntity>
 
+    @Query("SELECT id FROM notes")
+    suspend fun getAllNoteIds(): List<Long>
+
+    @Query(
+        """
+        SELECT id FROM notes 
+        WHERE title LIKE '%' || :query || '%'
+        """
+    )
+    suspend fun searchNoteIds(query: String): List<Long>
+
     @Query("DELETE FROM notes WHERE id = :id")
     suspend fun deleteNoteById(id: Long)
 

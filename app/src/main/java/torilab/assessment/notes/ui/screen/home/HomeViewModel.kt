@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import torilab.assessment.notes.domain.model.Note
+import torilab.assessment.notes.domain.repository.NoteRepository
 import torilab.assessment.notes.domain.usecase.DeleteMultipleNotesUseCase
 import torilab.assessment.notes.domain.usecase.DeleteNoteUseCase
 import torilab.assessment.notes.domain.usecase.GetAllNotesUseCase
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getAllNotesUseCase: GetAllNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
-    private val deleteMultipleNotesUseCase: DeleteMultipleNotesUseCase
+    private val deleteMultipleNotesUseCase: DeleteMultipleNotesUseCase,
+    private val noteRepository: NoteRepository
 ) : BaseViewModel<HomeState, HomeEvent>() {
 
     private val searchQuery = MutableStateFlow("")
@@ -51,7 +53,7 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.DeleteNote -> deleteNote(event.noteId)
             is HomeEvent.NoteLongPressed -> enterSelectionMode(event.noteId)
             is HomeEvent.ToggleNoteSelection -> toggleNoteSelection(event.noteId)
-            is HomeEvent.SelectAll -> selectAll(event.allNoteIds)
+            is HomeEvent.SelectAll -> selectAll()
             is HomeEvent.DeselectAll -> setState { copy(selectedNoteIds = emptySet()) }
             is HomeEvent.ExitSelectionMode -> setState { copy(isSelectionMode = false, selectedNoteIds = emptySet()) }
             is HomeEvent.DeleteSelectedNotes -> deleteSelectedNotes()
@@ -80,8 +82,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun selectAll(allNoteIds: List<Long>) {
-        setState { copy(selectedNoteIds = allNoteIds.toSet()) }
+    private fun selectAll() {
+        viewModelScope.launch {
+            val query = currentState.searchQuery
+            val allIds = if (query.isBlank()) {
+                noteRepository.getAllNoteIds()
+            } else {
+                noteRepository.searchNoteIds(query.trim())
+            }
+            setState { copy(selectedNoteIds = allIds.toSet()) }
+        }
     }
 
     private fun deleteNote(noteId: Long) {
@@ -118,7 +128,7 @@ sealed interface HomeEvent : IViewEvent {
 
     data class NoteLongPressed(val noteId: Long) : HomeEvent
     data class ToggleNoteSelection(val noteId: Long) : HomeEvent
-    data class SelectAll(val allNoteIds: List<Long>) : HomeEvent
+    data object SelectAll : HomeEvent
     data object DeselectAll : HomeEvent
     data object ExitSelectionMode : HomeEvent
     data object DeleteSelectedNotes : HomeEvent
