@@ -27,9 +27,19 @@ ToriNotes is a minimal notes application built as an assessment for Torilab. It 
 
 The project follows **Clean Architecture** combined with **MVVM (Model-View-ViewModel)** pattern, ensuring clear separation of concerns across three layers:
 
+<p align="center">
+  <img src="docs/images/clean_architecture.png" width="520" />
+</p>
+
 * **Domain Layer** — Contains business logic: models, repository interfaces, and use cases.
 * **Data Layer** — Implements repositories, local database (Room), DAOs, entity mappers, and preferences.
 * **Presentation Layer** — Compose UI screens, ViewModels, navigation, and theming.
+
+The MVVM pattern drives the data flow between layers:
+
+<p align="center">
+  <img src="docs/images/mvvm_diagram.png" width="580" />
+</p>
 
 Key architecture components:
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) — Manages UI-related data in a lifecycle-conscious way
