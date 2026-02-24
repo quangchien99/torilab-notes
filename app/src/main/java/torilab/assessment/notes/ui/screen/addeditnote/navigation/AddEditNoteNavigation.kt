@@ -9,16 +9,19 @@ import torilab.assessment.notes.common.Route
 import torilab.assessment.notes.ui.screen.addeditnote.AddEditNoteScreen
 
 @Serializable
-data object AddEditNote : Route()
+data class AddEditNote(val noteId: Long? = null) : Route()
 
 fun NavController.navigateToAddEditNote(
+    noteId: Long? = null,
     navOptions: NavOptions? = null
 ) {
-    this.navigate(AddEditNote, navOptions)
+    this.navigate(AddEditNote(noteId), navOptions)
 }
 
-fun NavGraphBuilder.addEditNoteScreen() {
+fun NavGraphBuilder.addEditNoteScreen(
+    onNavigateBack: () -> Unit
+) {
     composable<AddEditNote> {
-        AddEditNoteScreen()
+        AddEditNoteScreen(onNavigateBack = onNavigateBack)
     }
 }

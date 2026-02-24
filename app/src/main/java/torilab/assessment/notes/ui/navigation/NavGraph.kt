@@ -113,7 +113,7 @@ fun NavGraph() {
             homeScreen()
             historyScreen()
             settingsScreen()
-            addEditNoteScreen()
+            addEditNoteScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
