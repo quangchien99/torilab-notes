@@ -33,6 +33,10 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDao.getNoteById(id)?.toDomain()
     }
 
+    override suspend fun getNoteCount(): Int {
+        return noteDao.getNoteCount()
+    }
+
     override suspend fun getAllNoteIds(): List<Long> {
         return noteDao.getAllNoteIds()
     }

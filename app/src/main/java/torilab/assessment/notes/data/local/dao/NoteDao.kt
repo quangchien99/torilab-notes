@@ -35,6 +35,9 @@ interface NoteDao {
     )
     fun searchNotes(query: String): PagingSource<Int, NoteEntity>
 
+    @Query("SELECT COUNT(*) FROM notes")
+    suspend fun getNoteCount(): Int
+
     @Query("SELECT id FROM notes")
     suspend fun getAllNoteIds(): List<Long>
 

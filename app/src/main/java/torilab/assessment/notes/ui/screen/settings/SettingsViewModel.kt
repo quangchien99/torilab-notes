@@ -35,13 +35,15 @@ class SettingsViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 val batchSize = 100
                 val total = 1000
+                val offset = noteRepository.getNoteCount()
 
                 for (i in 0 until total step batchSize) {
                     val batch = (i until (i + batchSize).coerceAtMost(total)).map { index ->
+                        val noteNumber = offset + index + 1
                         val now = System.currentTimeMillis()
                         Note(
-                            title = "Test Note #${index + 1}",
-                            content = "This is auto-generated test note number ${index + 1}. " +
+                            title = "Test Note #$noteNumber",
+                            content = "This is auto-generated test note number $noteNumber. " +
                                     "Created for testing pagination and performance.",
                             createdAt = now - (total - index) * 1000L,
                             updatedAt = now - (total - index) * 1000L

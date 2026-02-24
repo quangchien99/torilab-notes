@@ -11,6 +11,7 @@ interface NoteRepository {
     suspend fun getNoteById(id: Long): Note?
     fun getAllNotes(): Flow<PagingData<Note>>
     fun searchNotes(query: String): Flow<PagingData<Note>>
+    suspend fun getNoteCount(): Int
     suspend fun getAllNoteIds(): List<Long>
     suspend fun searchNoteIds(query: String): List<Long>
     suspend fun deleteNoteById(id: Long)
