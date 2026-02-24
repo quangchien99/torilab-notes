@@ -145,10 +145,6 @@ git clone git@github.com:quangchien99/torilab-assessment-notes-app.git
 # Run on emulator or physical device
 ```
 
-## Contact
-
-- [GitHub](https://github.com/quangchien99)
-
 ```
 Designed and developed by quangchien99
 
