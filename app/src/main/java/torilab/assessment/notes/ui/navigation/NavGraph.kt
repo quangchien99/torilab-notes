@@ -25,7 +25,6 @@ import androidx.navigation.compose.rememberNavController
 import torilab.assessment.notes.R
 import torilab.assessment.notes.ui.screen.addeditnote.navigation.addEditNoteScreen
 import torilab.assessment.notes.ui.screen.addeditnote.navigation.navigateToAddEditNote
-import torilab.assessment.notes.ui.screen.history.navigation.historyScreen
 import torilab.assessment.notes.ui.screen.home.navigation.Home
 import torilab.assessment.notes.ui.screen.home.navigation.homeScreen
 import torilab.assessment.notes.ui.screen.settings.navigation.settingsScreen
@@ -113,7 +112,6 @@ fun NavGraph() {
             homeScreen(
                 onNoteClick = { noteId -> navController.navigateToAddEditNote(noteId = noteId) }
             )
-            historyScreen()
             settingsScreen()
             addEditNoteScreen(onNavigateBack = { navController.popBackStack() })
         }
