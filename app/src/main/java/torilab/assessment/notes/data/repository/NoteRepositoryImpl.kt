@@ -37,6 +37,10 @@ class NoteRepositoryImpl @Inject constructor(
         noteDao.deleteNoteById(id)
     }
 
+    override suspend fun deleteNotesByIds(ids: List<Long>) {
+        noteDao.deleteNotesByIds(ids)
+    }
+
     override fun getAllNotes(): Flow<PagingData<Note>> {
         return Pager(
             config = PagingConfig(

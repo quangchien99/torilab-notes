@@ -11,19 +11,30 @@ import torilab.assessment.notes.R
 @Composable
 fun DeleteConfirmDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    noteCount: Int = 1
 ) {
+    val title = if (noteCount <= 1)
+        stringResource(R.string.dialog_title_delete_note)
+    else
+        stringResource(R.string.dialog_title_delete_notes, noteCount)
+
+    val message = if (noteCount <= 1)
+        stringResource(R.string.dialog_message_delete_note)
+    else
+        stringResource(R.string.dialog_message_delete_notes, noteCount)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = stringResource(R.string.dialog_title_delete_note),
+                text = title,
                 style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
             Text(
-                text = stringResource(R.string.dialog_message_delete_note),
+                text = message,
                 style = MaterialTheme.typography.bodyMedium
             )
         },

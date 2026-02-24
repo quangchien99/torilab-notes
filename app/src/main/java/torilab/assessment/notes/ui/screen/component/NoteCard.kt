@@ -1,6 +1,13 @@
 package torilab.assessment.notes.ui.screen.component
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -37,6 +46,7 @@ import torilab.assessment.notes.R
 import torilab.assessment.notes.common.toFormattedDate
 import torilab.assessment.notes.domain.model.Note
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteCard(
     note: Note,
@@ -44,17 +54,26 @@ fun NoteCard(
     onEditClick: () -> Unit,
     onShareClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false,
+    onLongClick: () -> Unit = {}
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -64,6 +83,34 @@ fun NoteCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                AnimatedVisibility(
+                    visible = isSelectionMode,
+                    enter = scaleIn() + fadeIn(),
+                    exit = scaleOut() + fadeOut()
+                ) {
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Filled.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .padding(end = 12.dp)
+                                .size(24.dp)
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 12.dp)
+                                .size(24.dp)
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+
                 Text(
                     text = note.title,
                     style = MaterialTheme.typography.titleMedium,
@@ -74,68 +121,70 @@ fun NoteCard(
                     modifier = Modifier.weight(1f)
                 )
 
-                Box {
-                    IconButton(onClick = { menuExpanded = true }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(R.string.content_description_more_options),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                if (!isSelectionMode) {
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = stringResource(R.string.content_description_more_options),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
 
-                    DropdownMenu(
-                        expanded = menuExpanded,
-                        onDismissRequest = { menuExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_edit)) },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                            onClick = {
-                                menuExpanded = false
-                                onEditClick()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_share)) },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                            onClick = {
-                                menuExpanded = false
-                                onShareClick()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.action_delete),
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                            onClick = {
-                                menuExpanded = false
-                                onDeleteClick()
-                            }
-                        )
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_edit)) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onEditClick()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_share)) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onShareClick()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.action_delete),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onDeleteClick()
+                                }
+                            )
+                        }
                     }
                 }
             }

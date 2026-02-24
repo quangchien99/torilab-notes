@@ -1,6 +1,10 @@
 package torilab.assessment.notes.ui.screen.home
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +40,7 @@ import torilab.assessment.notes.R
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.ui.screen.component.DeleteConfirmDialog
 import torilab.assessment.notes.ui.screen.component.NoteCard
+import torilab.assessment.notes.ui.screen.home.component.SelectionTopBar
 
 @Composable
 fun HomeScreen(
@@ -42,16 +48,27 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val notes = viewModel.notesFlow.collectAsLazyPagingItems()
+    val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var noteToDelete by remember { mutableStateOf<Note?>(null) }
+    var showBatchDeleteDialog by remember { mutableStateOf(false) }
     val noteDeletedMessage = stringResource(R.string.message_note_deleted)
+    val notesDeletedMessage = stringResource(R.string.message_notes_deleted)
+
+    BackHandler(enabled = state.isSelectionMode) {
+        viewModel.onTriggerEvent(HomeEvent.ExitSelectionMode)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToEdit -> onNoteClick(event.noteId)
                 is HomeEvent.NoteDeleted -> snackbarHostState.showSnackbar(noteDeletedMessage)
+                is HomeEvent.NotesDeleted -> snackbarHostState.showSnackbar(
+                    notesDeletedMessage.format(event.count)
+                )
+
                 else -> Unit
             }
         }
@@ -63,17 +80,43 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Text(
-                text = stringResource(R.string.screen_title_home),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-            )
+            AnimatedVisibility(
+                visible = state.isSelectionMode,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                SelectionTopBar(
+                    selectedCount = state.selectedNoteIds.size,
+                    onClose = { viewModel.onTriggerEvent(HomeEvent.ExitSelectionMode) },
+                    onSelectAll = {
+                        val allIds = (0 until notes.itemCount).mapNotNull { notes[it]?.id }
+                        viewModel.onTriggerEvent(HomeEvent.SelectAll(allIds))
+                    },
+                    onDelete = { showBatchDeleteDialog = true }
+                )
+            }
+
+            AnimatedVisibility(visible = !state.isSelectionMode) {
+                Text(
+                    text = stringResource(R.string.screen_title_home),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 16.dp,
+                        bottom = 8.dp
+                    )
+                )
+            }
 
             HomeContent(
                 notes = notes,
+                isSelectionMode = state.isSelectionMode,
+                selectedNoteIds = state.selectedNoteIds,
                 onNoteClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) },
+                onNoteLongClick = { viewModel.onTriggerEvent(HomeEvent.NoteLongPressed(it)) },
                 onEditClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) },
                 onShareClick = { note ->
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -102,12 +145,26 @@ fun HomeScreen(
             onDismiss = { noteToDelete = null }
         )
     }
+
+    if (showBatchDeleteDialog) {
+        DeleteConfirmDialog(
+            noteCount = state.selectedNoteIds.size,
+            onConfirm = {
+                viewModel.onTriggerEvent(HomeEvent.DeleteSelectedNotes)
+                showBatchDeleteDialog = false
+            },
+            onDismiss = { showBatchDeleteDialog = false }
+        )
+    }
 }
 
 @Composable
 private fun HomeContent(
     notes: LazyPagingItems<Note>,
+    isSelectionMode: Boolean,
+    selectedNoteIds: Set<Long>,
     onNoteClick: (Long) -> Unit,
+    onNoteLongClick: (Long) -> Unit,
     onEditClick: (Long) -> Unit,
     onShareClick: (Note) -> Unit,
     onDeleteClick: (Note) -> Unit
@@ -151,7 +208,10 @@ private fun HomeContent(
                             onClick = { onNoteClick(note.id) },
                             onEditClick = { onEditClick(note.id) },
                             onShareClick = { onShareClick(note) },
-                            onDeleteClick = { onDeleteClick(note) }
+                            onDeleteClick = { onDeleteClick(note) },
+                            isSelectionMode = isSelectionMode,
+                            isSelected = selectedNoteIds.contains(note.id),
+                            onLongClick = { onNoteLongClick(note.id) }
                         )
                     }
                 }
