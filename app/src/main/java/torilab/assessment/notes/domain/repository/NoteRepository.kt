@@ -6,6 +6,7 @@ import torilab.assessment.notes.domain.model.Note
 
 interface NoteRepository {
     suspend fun addNote(note: Note): Long
+    suspend fun addNotes(notes: List<Note>)
     suspend fun updateNote(note: Note)
     suspend fun getNoteById(id: Long): Note?
     fun getAllNotes(): Flow<PagingData<Note>>

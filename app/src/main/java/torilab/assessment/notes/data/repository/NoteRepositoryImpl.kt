@@ -21,6 +21,10 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDao.insertNote(note.toEntity())
     }
 
+    override suspend fun addNotes(notes: List<Note>) {
+        noteDao.insertNotes(notes.map { it.toEntity() })
+    }
+
     override suspend fun updateNote(note: Note) {
         noteDao.updateNote(note.toEntity())
     }
