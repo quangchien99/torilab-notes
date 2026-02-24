@@ -22,4 +22,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes ORDER BY updatedAt DESC")
     fun getAllNotes(): PagingSource<Int, NoteEntity>
+
+    @Query("DELETE FROM notes WHERE id = :id")
+    suspend fun deleteNoteById(id: Long)
 }

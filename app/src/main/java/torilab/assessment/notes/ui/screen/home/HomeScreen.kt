@@ -1,5 +1,6 @@
 package torilab.assessment.notes.ui.screen.home
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,13 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,43 +43,113 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val notes = viewModel.notesFlow.collectAsLazyPagingItems()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var noteToDelete by remember { mutableStateOf<Note?>(null) }
+    val noteDeletedMessage = stringResource(R.string.message_note_deleted)
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToEdit -> onNoteClick(event.noteId)
+                is HomeEvent.NoteDeleted -> snackbarHostState.showSnackbar(noteDeletedMessage)
                 else -> Unit
             }
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Text(
-            text = stringResource(R.string.screen_title_home),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Text(
+                text = stringResource(R.string.screen_title_home),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+            )
 
-        HomeContent(
-            notes = notes,
-            onNoteClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) }
+            HomeContent(
+                notes = notes,
+                onNoteClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) },
+                onEditClick = { viewModel.onTriggerEvent(HomeEvent.NoteClicked(it)) },
+                onShareClick = { note ->
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, note.title)
+                        putExtra(Intent.EXTRA_TEXT, "${note.title}\n\n${note.content}")
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, null))
+                },
+                onDeleteClick = { note -> noteToDelete = note }
+            )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+
+    noteToDelete?.let { note ->
+        DeleteConfirmDialog(
+            onConfirm = {
+                viewModel.onTriggerEvent(HomeEvent.DeleteNote(note.id))
+                noteToDelete = null
+            },
+            onDismiss = { noteToDelete = null }
         )
     }
 }
 
 @Composable
+private fun DeleteConfirmDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.dialog_title_delete_note),
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.dialog_message_delete_note),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = stringResource(R.string.action_delete),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.action_cancel))
+            }
+        }
+    )
+}
+
+@Composable
 private fun HomeContent(
     notes: LazyPagingItems<Note>,
-    onNoteClick: (Long) -> Unit
+    onNoteClick: (Long) -> Unit,
+    onEditClick: (Long) -> Unit,
+    onShareClick: (Note) -> Unit,
+    onDeleteClick: (Note) -> Unit
 ) {
-    when {
-        notes.loadState.refresh is LoadState.Loading -> {
+    when (notes.loadState.refresh) {
+        is LoadState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -78,7 +158,7 @@ private fun HomeContent(
             }
         }
 
-        notes.loadState.refresh is LoadState.NotLoading && notes.itemCount == 0 -> {
+        is LoadState.NotLoading if notes.itemCount == 0 -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -104,7 +184,10 @@ private fun HomeContent(
                     notes[index]?.let { note ->
                         NoteCard(
                             note = note,
-                            onClick = { onNoteClick(note.id) }
+                            onClick = { onNoteClick(note.id) },
+                            onEditClick = { onEditClick(note.id) },
+                            onShareClick = { onShareClick(note) },
+                            onDeleteClick = { onDeleteClick(note) }
                         )
                     }
                 }

@@ -9,4 +9,5 @@ interface NoteRepository {
     suspend fun updateNote(note: Note)
     suspend fun getNoteById(id: Long): Note?
     fun getAllNotes(): Flow<PagingData<Note>>
+    suspend fun deleteNoteById(id: Long)
 }
