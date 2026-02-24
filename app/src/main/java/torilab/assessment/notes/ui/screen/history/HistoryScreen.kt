@@ -12,14 +12,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import torilab.assessment.notes.R
-import torilab.assessment.notes.ui.theme.NeutralWhite
 
 @Composable
 fun HistoryScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(NeutralWhite)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
             text = stringResource(R.string.screen_title_history),

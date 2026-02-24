@@ -2,7 +2,10 @@ package torilab.assessment.notes.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -19,14 +22,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import torilab.assessment.notes.R
+import torilab.assessment.notes.ui.screen.addeditnote.navigation.addEditNoteScreen
+import torilab.assessment.notes.ui.screen.addeditnote.navigation.navigateToAddEditNote
 import torilab.assessment.notes.ui.screen.history.navigation.historyScreen
 import torilab.assessment.notes.ui.screen.home.navigation.Home
 import torilab.assessment.notes.ui.screen.home.navigation.homeScreen
 import torilab.assessment.notes.ui.screen.settings.navigation.settingsScreen
-import torilab.assessment.notes.ui.theme.LightGray200
-import torilab.assessment.notes.ui.theme.NeutralBlack
-import torilab.assessment.notes.ui.theme.NeutralWhite
-import torilab.assessment.notes.ui.theme.LightGray400
 
 @Composable
 fun NavGraph() {
@@ -43,10 +45,11 @@ fun NavGraph() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (isBottomNavDestination) {
                 NavigationBar(
-                    containerColor = NeutralWhite,
+                    containerColor = MaterialTheme.colorScheme.surface,
                 ) {
                     BottomNav.entries.forEach { bottomNav ->
                         val isSelected = currentDestination?.hierarchy?.any {
@@ -74,11 +77,11 @@ fun NavGraph() {
                                 Text(text = stringResource(id = bottomNav.titleTextId))
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = NeutralBlack,
-                                selectedTextColor = NeutralBlack,
-                                unselectedIconColor = LightGray400,
-                                unselectedTextColor = LightGray400,
-                                indicatorColor = LightGray200,
+                                selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedIconColor = MaterialTheme.colorScheme.outline,
+                                unselectedTextColor = MaterialTheme.colorScheme.outline,
+                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                         )
                     }
@@ -86,8 +89,19 @@ fun NavGraph() {
             }
         },
         floatingActionButton = {
-            if (isBottomNavDestination) {
-
+            val isHome = currentDestination?.hasRoute(Home::class) == true
+            if (isHome) {
+                FloatingActionButton(
+                    onClick = { navController.navigateToAddEditNote() },
+                    shape = CircleShape,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_outline_add),
+                        contentDescription = stringResource(id = R.string.content_description_add_note)
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -99,6 +113,7 @@ fun NavGraph() {
             homeScreen()
             historyScreen()
             settingsScreen()
+            addEditNoteScreen()
         }
     }
 }

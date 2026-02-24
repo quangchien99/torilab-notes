@@ -1,4 +1,4 @@
-package torilab.assessment.notes.ui.screen.settings
+package torilab.assessment.notes.ui.screen.addeditnote
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 import torilab.assessment.notes.R
 
 @Composable
-fun SettingsScreen() {
+fun AddEditNoteScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
-            text = stringResource(R.string.screen_title_settings),
+            text = stringResource(R.string.screen_title_add_edit_note),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(16.dp)
