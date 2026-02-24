@@ -8,6 +8,7 @@ import io.mockk.runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -33,7 +34,7 @@ class SettingsViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         noteRepository = mockk()
-        viewModel = SettingsViewModel(noteRepository)
+        viewModel = SettingsViewModel(noteRepository, testDispatcher)
     }
 
     @After
@@ -50,7 +51,7 @@ class SettingsViewModelTest {
     @Test
     fun `GenerateBulkNotes sets isGenerating to true`() = runTest {
         coEvery { noteRepository.getNoteCount() } returns 0
-        coEvery { noteRepository.addNotes(any()) } just runs
+        coEvery { noteRepository.addNotes(any()) } coAnswers { delay(100) }
 
         viewModel.onTriggerEvent(SettingsEvent.GenerateBulkNotes)
         testDispatcher.scheduler.advanceTimeBy(1)
@@ -97,7 +98,7 @@ class SettingsViewModelTest {
     @Test
     fun `GenerateBulkNotes ignores duplicate trigger while generating`() = runTest {
         coEvery { noteRepository.getNoteCount() } returns 0
-        coEvery { noteRepository.addNotes(any()) } just runs
+        coEvery { noteRepository.addNotes(any()) } coAnswers { delay(100) }
 
         viewModel.onTriggerEvent(SettingsEvent.GenerateBulkNotes)
         testDispatcher.scheduler.advanceTimeBy(1)

@@ -113,22 +113,22 @@ The project includes unit tests across all layers of the Clean Architecture, usi
 
 ### Coverage
 
-| Layer | Class | Tests | Description |
-|---|---|---|---|
-| **Common** | `DateUtilsTest` | 4 | Date formatting with default/custom patterns and edge cases |
-| **Data — Mapper** | `NoteMapperTest` | 5 | Entity ↔ Domain mapping and roundtrip consistency |
-| **Data — Repository** | `NoteRepositoryImplTest` | 9 | All repository methods with DAO delegation and entity mapping |
-| **Domain — UseCase** | `AddNoteUseCaseTest` | 2 | Flow emission and repository delegation |
-| **Domain — UseCase** | `UpdateNoteUseCaseTest` | 2 | Flow emission and repository delegation |
-| **Domain — UseCase** | `DeleteNoteUseCaseTest` | 2 | Flow emission and repository delegation |
-| **Domain — UseCase** | `DeleteMultipleNotesUseCaseTest` | 3 | Batch deletion and empty list handling |
-| **Domain — UseCase** | `GetNoteByIdUseCaseTest` | 3 | Found/not-found cases and repository delegation |
-| **Domain — UseCase** | `GetAllNotesUseCaseTest` | 5 | Blank/non-blank query routing and query trimming |
-| **Presentation** | `HomeViewModelTest` | 14 | Selection mode, toggle, search, delete, select all, navigation events |
-| **Presentation** | `AddEditNoteViewModelTest` | 7 | State changes, save validation, input trimming, delete guard |
-| **Presentation** | `SettingsViewModelTest` | 6 | Bulk generation, batching, offset, duplicate trigger guard |
+| Layer | Class | Description |
+|---|---|--|---|
+| **Common** | `DateUtilsTest` | Date formatting with default/custom patterns and edge cases |
+| **Data — Mapper** | `NoteMapperTest` | Entity ↔ Domain mapping and roundtrip consistency |
+| **Data — Repository** | `NoteRepositoryImplTest` | All repository methods with DAO delegation and entity mapping |
+| **Domain — UseCase** | `AddNoteUseCaseTest` | Flow emission and repository delegation |
+| **Domain — UseCase** | `UpdateNoteUseCaseTest` | Flow emission and repository delegation |
+| **Domain — UseCase** | `DeleteNoteUseCaseTest` | Flow emission and repository delegation |
+| **Domain — UseCase** | `DeleteMultipleNotesUseCaseTest` | Batch deletion and empty list handling |
+| **Domain — UseCase** | `GetNoteByIdUseCaseTest` | Found/not-found cases and repository delegation |
+| **Domain — UseCase** | `GetAllNotesUseCaseTest` | Blank/non-blank query routing and query trimming |
+| **Presentation** | `HomeViewModelTest` | Selection mode, toggle, search, delete, select all, navigation events |
+| **Presentation** | `AddEditNoteViewModelTest` | State changes, save validation, input trimming, delete guard |
+| **Presentation** | `SettingsViewModelTest` | Bulk generation, batching, offset, duplicate trigger guard |
 
-**Total: 62 test cases**
+**Total: 66 test cases**
 
 ## Environment Setup
 

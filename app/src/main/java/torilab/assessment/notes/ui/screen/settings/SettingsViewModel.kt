@@ -2,9 +2,10 @@ package torilab.assessment.notes.ui.screen.settings
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import torilab.assessment.notes.di.IoDispatcher
 import torilab.assessment.notes.domain.model.Note
 import torilab.assessment.notes.domain.repository.NoteRepository
 import torilab.assessment.notes.domain.viewstate.IViewEvent
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<SettingsState, SettingsEvent>() {
 
     override fun createInitialState() = SettingsState()
@@ -32,7 +34,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(isGenerating = true, generatedCount = 0) }
 
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val batchSize = 100
                 val total = 1000
                 val offset = noteRepository.getNoteCount()
