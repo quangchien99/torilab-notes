@@ -114,7 +114,7 @@ The project includes unit tests across all layers of the Clean Architecture, usi
 ### Coverage
 
 | Layer | Class | Description |
-|---|---|--|---|
+|---|---|---|
 | **Common** | `DateUtilsTest` | Date formatting with default/custom patterns and edge cases |
 | **Data — Mapper** | `NoteMapperTest` | Entity ↔ Domain mapping and roundtrip consistency |
 | **Data — Repository** | `NoteRepositoryImplTest` | All repository methods with DAO delegation and entity mapping |
